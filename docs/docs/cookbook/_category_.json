@@ -1,0 +1,8 @@
+{
+  "label": "Cookbook",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "A list of example usage patterns"
+  }
+}
