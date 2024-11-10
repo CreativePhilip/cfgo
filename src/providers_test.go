@@ -37,3 +37,19 @@ func TestJsonFileVariableSourceProvider__InvalidFileContentPanics(t *testing.T) 
 
 	t.Errorf("test did not panic")
 }
+
+func TestYamlVariableSourceProvider__HappyPath(t *testing.T) {
+	provider := NewYamlFileVariableSourceProvider("../fixtures/yaml/file_1.yaml")
+	data := provider.GetValues()
+
+	assert.Equal(t, "val1", data["key1"])
+}
+
+func TestYamlVariableSourceProvider__InvalidFileContentPanics(t *testing.T) {
+	defer func() { recover() }()
+
+	provider := NewYamlFileVariableSourceProvider("../fixtures/yaml/invalid.yaml")
+	_ = provider.GetValues()
+
+	t.Errorf("test did not panic")
+}
