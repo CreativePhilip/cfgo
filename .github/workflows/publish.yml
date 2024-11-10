@@ -1,0 +1,11 @@
+on: release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - name: Deploy package to the registry
+        run: go list -m github.com/CreativePhilip/cfgo@${{github.event.release.tag_name}}
