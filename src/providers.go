@@ -1,6 +1,7 @@
 package cfgo
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -74,4 +75,36 @@ func (p *EnvFileVariableSourceProvider) GetValues() map[string]string {
 
 func NewEnvFileVariableSourceProvider(globPattern string) ConfigSourceProvider {
 	return &EnvFileVariableSourceProvider{GlobPattern: globPattern}
+}
+
+// ----------------------
+
+type JsonFileVariableSourceProvider struct {
+	GlobPattern string
+}
+
+func (p *JsonFileVariableSourceProvider) GetValues() map[string]string {
+	files, err := filepath.Glob(p.GlobPattern)
+	outMap := map[string]string{}
+
+	if err != nil {
+		panic("cfgo: invalid pattern")
+	}
+
+	for _, file := range files {
+		fileContent := must(os.ReadFile(file))
+
+		var data map[string]string
+		if err := json.Unmarshal(fileContent, &data); err != nil {
+			panic(err)
+		}
+
+		outMap = joinMaps(outMap, data)
+	}
+
+	return outMap
+}
+
+func NewJsonFileVariableSourceProvider(globPattern string) ConfigSourceProvider {
+	return &JsonFileVariableSourceProvider{GlobPattern: globPattern}
 }
