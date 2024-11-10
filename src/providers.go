@@ -2,6 +2,7 @@ package cfgo
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -42,4 +43,35 @@ func NewMockVariablesSourceProvider(values map[string]string) ConfigSourceProvid
 	return &MockVariablesSourceProvider{
 		values: values,
 	}
+}
+
+// ----------------------
+
+type EnvFileVariableSourceProvider struct {
+	GlobPattern string
+}
+
+func (p *EnvFileVariableSourceProvider) GetValues() map[string]string {
+	files, err := filepath.Glob(p.GlobPattern)
+	outMap := map[string]string{}
+
+	if err != nil {
+		panic("cfgo: invalid pattern")
+	}
+
+	for _, file := range files {
+		fileContent := must(os.ReadFile(file))
+		lines := strings.Split(string(fileContent), "\n")
+
+		for _, line := range lines {
+			parsedLine := strings.SplitN(line, "=", 2)
+			outMap[parsedLine[0]] = parsedLine[1]
+		}
+	}
+
+	return outMap
+}
+
+func NewEnvFileVariableSourceProvider(globPattern string) ConfigSourceProvider {
+	return &EnvFileVariableSourceProvider{GlobPattern: globPattern}
 }
