@@ -2,6 +2,10 @@ module github.com/CreativePhilip/cfgo
 
 go 1.23.0
 
+replace (
+	github.com/CreativePhilip/cfgo => ./src
+)
+
 require github.com/stretchr/testify v1.9.0
 
 require (
