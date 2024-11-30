@@ -66,6 +66,10 @@ func (p *EnvFileVariableSourceProvider) GetValues() map[string]string {
 		lines := strings.Split(string(fileContent), "\n")
 
 		for _, line := range lines {
+			if line == "" {
+				continue
+			}
+
 			parsedLine := strings.SplitN(line, "=", 2)
 			outMap[parsedLine[0]] = parsedLine[1]
 		}
